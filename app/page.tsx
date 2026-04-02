@@ -1,44 +1,70 @@
-import { addTask } from "@/lib/actions";
-import prisma from "@/lib/db";
-
-type Task = {
-  id: string | number;
-  title: string;
-}
+import { Card } from "@/components/ui/card"
+import prisma from "@/lib/db"
+import TaskForm from "./components/TaskForm"
+import TaskItem from "./components/TaskItem"
+import { ThemeSwitcher } from "./components/ThemeSwitcher"
 
 export default async function Home() {
-  const tasks = await prisma.task.findMany()
+  const tasks = await prisma.task.findMany({
+    orderBy: { createdAt: "desc" }
+  })
 
   return (
-    <div className="min-h-screen flex flex-col gap-12 items-center justify-center">
-      <h1 className="text-5xl font-semibold text-center">
-        All tasks:
-      </h1>
-
-      <div className="">
-        {tasks.map((task: Task) => (
-          <div
-            key={task.id}
-            className="text-xl px-3 py-1 rounded"
-          >
-            {task.title}
+    <div className="min-h-screen bg-canvas-bg">
+      {/* Navbar */}
+      <nav className="border-b border-canvas-border/40 bg-canvas-base sticky top-0 z-40 shadow-sm">
+        <div className="max-w-4xl mx-auto lg:px-0 px-4 py-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-canvas-text-contrast">Task Manager</h1>
           </div>
-        ))}
-      </div>
+          <ThemeSwitcher />
+        </div>
+      </nav>
 
-      <form action={addTask} className="flex gap-2">
-        <input
-          type="text"
-          name="title"
-          className="flex-1 px-4 py-2 border rounded focus:outline-none focus:ring-0"
-        />
-        <button
-          type="submit"
-          className="px-6 py-2 rounded transition-colors font-medium bg-blue-600 hover:bg-blue-500"
-        >
-          Add task
-        </button>
-      </form>
+      <div className="py-6 px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="mb-6">
+            <p className="text-lg text-canvas-text">
+              Stay organized and track your daily tasks
+            </p>
+          </div>
+
+          {/* Form */}
+          <div className="mb-6">
+            <TaskForm />
+          </div>
+
+          {/* Tasks List */}
+          <Card className="p-6">
+            {tasks.length === 0 ? (
+              <div className="text-center py-16">
+                <p className="text-canvas-solid text-lg">No tasks yet. Add one to get started!</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {tasks.map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    id={task.id}
+                    title={task.title}
+                    completed={task.completed}
+                  />
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {/* Stats */}
+          {tasks.length > 0 && (
+            <div className="mt-8 text-center text-sm text-canvas-text">
+              <p>
+                {tasks.filter(t => !t.completed).length} of {tasks.length} tasks remaining
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
-  );
+  )
 }
