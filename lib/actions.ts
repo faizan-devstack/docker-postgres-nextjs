@@ -1,5 +1,6 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
 import prisma from "./db"
 
 export async function addTask(formData: FormData) {
@@ -8,4 +9,6 @@ export async function addTask(formData: FormData) {
             title: formData.get("title") as string,
         }
     })
+
+    revalidatePath("/") // revalidate the home page to show the new task
 }
