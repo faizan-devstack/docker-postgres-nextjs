@@ -60,7 +60,20 @@ A modern, fully-featured task management application demonstrating proper implem
 
 ## Getting Started
 
-### 1. Start the PostgreSQL database
+### Prerequisites
+
+- **Docker** and **Docker Compose** installed
+- **Node.js 18+** and **pnpm** installed
+
+### Local Setup
+
+#### 1. Clone and install dependencies
+
+```bash
+pnpm install
+```
+
+#### 2. Start the PostgreSQL database
 
 ```bash
 docker compose up -d
@@ -68,7 +81,7 @@ docker compose up -d
 
 This starts a PostgreSQL 15 instance on port `5432` with the password `password`.
 
-### 2. Configure the environment
+#### 3. Configure the environment
 
 Create a `.env` file in the root:
 
@@ -76,25 +89,29 @@ Create a `.env` file in the root:
 DATABASE_URL="postgresql://postgres:password@localhost:5432/postgres"
 ```
 
-### 3. Install dependencies
+#### 4. Run database migrations
 
 ```bash
-pnpm install
+pnpm exec prisma migrate dev
 ```
 
-### 4. Push the schema to the database
+This applies all migrations from the `prisma/migrations` folder to set up your database schema.
 
-```bash
-npx prisma db push
-```
-
-### 5. Run the development server
+#### 5. Start the development server
 
 ```bash
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to see the app.
+
+#### 6. (Optional) View your database
+
+```bash
+pnpm exec prisma studio
+```
+
+This opens an interactive UI to browse and manage your database at [http://localhost:5555](http://localhost:5555).
 
 ## Features
 
